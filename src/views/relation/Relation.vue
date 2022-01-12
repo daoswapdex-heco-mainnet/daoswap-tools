@@ -18,18 +18,18 @@
                 <form>
                   <v-card-title>
                     <span class="headline">{{
-                      $t("Please enter your inviter's address")
+                      $t("Please enter your address")
                     }}</span>
                   </v-card-title>
                   <v-card-text>
                     <v-text-field
-                      :label="$t('Inviter\'s address')"
-                      v-model="inviterAccount"
-                      :error-messages="inviterAccountErrors"
+                      :label="$t('Address')"
+                      v-model="queryAccount"
+                      :error-messages="queryAccountErrors"
                       required
-                      @input="$v.inviterAccount.$touch()"
-                      @blur="$v.inviterAccount.$touch()"
-                      :autofocus="inviterAccountFocus"
+                      @input="$v.queryAccount.$touch()"
+                      @blur="$v.queryAccount.$touch()"
+                      :autofocus="queryAccountFocus"
                       append-icon="mdi-close"
                       @click:append="appendIconCallback"
                     ></v-text-field>
@@ -41,9 +41,19 @@
                       dark
                       width="80%"
                       :disabled="!submitLoading"
-                      @click="submit"
+                      @click="queryInvitee"
                     >
-                      {{ $t("Query") }}
+                      {{ $t("Query Invitee") }}
+                    </v-btn>
+                  </v-card-actions>
+                  <v-card-actions class="justify-center custom-btn">
+                    <v-btn
+                      large
+                      width="80%"
+                      :disabled="!submitLoading"
+                      @click="queryInviter"
+                    >
+                      {{ $t("Query Inviter") }}
                     </v-btn>
                   </v-card-actions>
                 </form>
@@ -59,7 +69,6 @@
                     >
                       {{ item }}
                     </v-list-item>
-
                     <v-divider
                       v-if="index < dataList.length - 1"
                       :key="index"
@@ -144,7 +153,7 @@
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import clip from "@/utils/clipboard";
-import { RelationContractAddress } from "@/constants";
+import { ZeroAddress, RelationContractAddress } from "@/constants";
 import {
   getContractByABI,
   checkAddressChecksum,
@@ -157,12 +166,12 @@ export default {
   name: "Relation",
   mixins: [validationMixin],
   validations: {
-    inviterAccount: { required }
+    queryAccount: { required }
   },
   data: () => ({
     loading: false,
-    inviterAccountFocus: true,
-    inviterAccount: undefined,
+    queryAccountFocus: true,
+    queryAccount: undefined,
     // 查询数据
     selected: [2],
     isQuery: false,
@@ -189,24 +198,24 @@ export default {
     address() {
       return this.$store.state.web3.address;
     },
-    inviterAccountErrors() {
+    queryAccountErrors() {
       const errors = [];
-      if (!this.$v.inviterAccount.$dirty) return errors;
-      !this.$v.inviterAccount.required &&
-        errors.push(this.$t("Please enter your inviter's address"));
+      if (!this.$v.queryAccount.$dirty) return errors;
+      !this.$v.queryAccount.required &&
+        errors.push(this.$t("Please enter your address"));
 
       try {
-        if (!checkAddressChecksum(this.$v.inviterAccount.$model)) {
-          errors.push(this.$t("The inviter's address is wrong"));
+        if (!checkAddressChecksum(this.$v.queryAccount.$model)) {
+          errors.push(this.$t("The address is wrong"));
         }
       } catch (e) {
-        errors.push(this.$t("The inviter's address is wrong"));
+        errors.push(this.$t("The address is wrong"));
       }
 
       return errors;
     },
     submitLoading() {
-      return this.inviterAccount && this.inviterAccountErrors.length <= 0;
+      return this.queryAccount && this.queryAccountErrors.length <= 0;
     }
   },
   methods: {
@@ -226,15 +235,15 @@ export default {
       this.operationResult.text = "Cope Success";
     },
     appendIconCallback() {
-      this.inviterAccount = "";
+      this.queryAccount = "";
       this.isQuery = false;
     },
-    // 执行方法
-    async submit() {
+    // 查询被邀请人
+    async queryInvitee() {
       if (this.$v.$invalid) {
         // error info
-        if (this.$v.inviterAccount.$invalid) {
-          this.inviterAccountFocus = true;
+        if (this.$v.queryAccount.$invalid) {
+          this.queryAccountFocus = true;
         }
         this.$v.$touch();
       } else {
@@ -249,9 +258,46 @@ export default {
         this.dataList = [];
         // 执行合约
         contract.methods
-          .getMemberListByInviter(toChecksumAddress(this.inviterAccount))
+          .getMemberListByInviter(toChecksumAddress(this.queryAccount))
           .call({ from: this.address }, (e, r) => {
             this.dataList = r;
+            this.isQuery = true;
+            this.loading = false;
+          })
+          .catch(() => {
+            this.operationResult.color = "red";
+            this.operationResult.snackbar = true;
+            this.operationResult.text =
+              "The current account does not have query permission";
+            this.loading = false;
+          });
+      }
+    },
+    // 查询邀请人
+    async queryInviter() {
+      if (this.$v.$invalid) {
+        // error info
+        if (this.$v.queryAccount.$invalid) {
+          this.queryAccountFocus = true;
+        }
+        this.$v.$touch();
+      } else {
+        this.$v.$touch();
+        const contract = getContractByABI(
+          RelationABI,
+          RelationContractAddress,
+          this.web3
+        );
+        this.isQuery = false;
+        this.loading = true;
+        this.dataList = [];
+        // 执行合约
+        contract.methods
+          .getInviterInfoByInvitee(toChecksumAddress(this.queryAccount))
+          .call({ from: this.address }, (e, r) => {
+            if (r.inviterToken != ZeroAddress) {
+              this.dataList.push(r.inviterToken);
+            }
             this.isQuery = true;
             this.loading = false;
           })

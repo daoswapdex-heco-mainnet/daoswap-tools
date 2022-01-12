@@ -57,9 +57,14 @@ export default {
   "At mostest": "最多",
   Operation: "操作",
 
+  Address: "地址",
   Query: "查询",
-  "Query Relation": "查询邀请用户",
+  "Query Inviter": "查询邀请人",
+  "Query Invitee": "查询被邀请人",
+  "Query Relation": "查询邀请关系",
   "Inviter's address": "邀请人地址",
+  "Please enter your address": "请输入地址",
   "Please enter your inviter's address": "请输入邀请人地址",
+  "The address is wrong": "地址错误",
   "The inviter's address is wrong": "邀请地址错误"
 };

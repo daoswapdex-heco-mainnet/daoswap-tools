@@ -57,9 +57,14 @@ export default {
   "At mostest": "At mostest",
   Operation: "Operation",
 
+  Address: "Address",
   Query: "Query",
+  "Query Inviter": "Query Inviter",
+  "Query Invitee": "Query Invitee",
   "Query Relation": "Query Relation",
   "Inviter's address": "Inviter's address",
+  "Please enter your address": "Please enter your address",
   "Please enter your inviter's address": "Please enter your inviter's address",
+  "The address is wrong": "The address is wrong",
   "The inviter's address is wrong": "The inviter's address is wrong"
 };

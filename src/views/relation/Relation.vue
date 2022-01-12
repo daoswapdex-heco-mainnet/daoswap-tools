@@ -260,16 +260,17 @@ export default {
         contract.methods
           .getMemberListByInviter(toChecksumAddress(this.queryAccount))
           .call({ from: this.address }, (e, r) => {
-            this.dataList = r;
-            this.isQuery = true;
-            this.loading = false;
-          })
-          .catch(() => {
-            this.operationResult.color = "red";
-            this.operationResult.snackbar = true;
-            this.operationResult.text =
-              "The current account does not have query permission";
-            this.loading = false;
+            if (e) {
+              this.operationResult.color = "red";
+              this.operationResult.snackbar = true;
+              this.operationResult.text =
+                "The current account does not have query permission";
+              this.loading = false;
+            } else {
+              this.dataList = r;
+              this.isQuery = true;
+              this.loading = false;
+            }
           });
       }
     },
@@ -295,18 +296,19 @@ export default {
         contract.methods
           .getInviterInfoByInvitee(toChecksumAddress(this.queryAccount))
           .call({ from: this.address }, (e, r) => {
-            if (r.inviterToken != ZeroAddress) {
-              this.dataList.push(r.inviterToken);
+            if (e) {
+              this.operationResult.color = "red";
+              this.operationResult.snackbar = true;
+              this.operationResult.text =
+                "The current account does not have query permission";
+              this.loading = false;
+            } else {
+              if (r.inviterToken != ZeroAddress) {
+                this.dataList.push(r.inviterToken);
+              }
+              this.isQuery = true;
+              this.loading = false;
             }
-            this.isQuery = true;
-            this.loading = false;
-          })
-          .catch(() => {
-            this.operationResult.color = "red";
-            this.operationResult.snackbar = true;
-            this.operationResult.text =
-              "The current account does not have query permission";
-            this.loading = false;
           });
       }
     }

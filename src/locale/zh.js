@@ -66,5 +66,6 @@ export default {
   "Please enter your address": "请输入地址",
   "Please enter your inviter's address": "请输入邀请人地址",
   "The address is wrong": "地址错误",
-  "The inviter's address is wrong": "邀请地址错误"
+  "The inviter's address is wrong": "邀请地址错误",
+  "The current account does not have query permission": "当前账号没有查询权限"
 };

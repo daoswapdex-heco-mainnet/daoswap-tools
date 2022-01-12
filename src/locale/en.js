@@ -66,5 +66,7 @@ export default {
   "Please enter your address": "Please enter your address",
   "Please enter your inviter's address": "Please enter your inviter's address",
   "The address is wrong": "The address is wrong",
-  "The inviter's address is wrong": "The inviter's address is wrong"
+  "The inviter's address is wrong": "The inviter's address is wrong",
+  "The current account does not have query permission":
+    "The current account does not have query permission"
 };

@@ -60,6 +60,9 @@
               </v-card-text>
               <v-divider v-if="isQuery && dataList.length > 0"></v-divider>
               <v-list v-if="isQuery && dataList.length > 0">
+                <v-list-item
+                  >{{ $t("Result Count") }}: {{ dataList.length }}</v-list-item
+                >
                 <v-list-item-group active-class="green--text">
                   <template v-for="(item, index) in dataList">
                     <v-list-item
@@ -154,11 +157,7 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import clip from "@/utils/clipboard";
 import { ZeroAddress, RelationContractAddress } from "@/constants";
-import {
-  getContractByABI,
-  checkAddressChecksum,
-  toChecksumAddress
-} from "@/utils/web3";
+import { getContractByABI, toChecksumAddress } from "@/utils/web3";
 // 引入合约 ABI 文件
 import RelationABI from "@/constants/contractJson/RelationshipABI.json";
 
@@ -203,14 +202,6 @@ export default {
       if (!this.$v.queryAccount.$dirty) return errors;
       !this.$v.queryAccount.required &&
         errors.push(this.$t("Please enter your address"));
-
-      try {
-        if (!checkAddressChecksum(this.$v.queryAccount.$model)) {
-          errors.push(this.$t("The address is wrong"));
-        }
-      } catch (e) {
-        errors.push(this.$t("The address is wrong"));
-      }
 
       return errors;
     },

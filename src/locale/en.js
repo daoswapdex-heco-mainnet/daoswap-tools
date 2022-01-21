@@ -59,6 +59,7 @@ export default {
 
   Address: "Address",
   Query: "Query",
+  "Result Count": "Result Count",
   "Query Inviter": "Query Inviter",
   "Query Invitee": "Query Invitee",
   "Query Relation": "Query Relation",

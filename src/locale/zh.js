@@ -59,6 +59,7 @@ export default {
 
   Address: "地址",
   Query: "查询",
+  "Result Count": "结果数量",
   "Query Inviter": "查询邀请人",
   "Query Invitee": "查询被邀请人",
   "Query Relation": "查询邀请关系",
